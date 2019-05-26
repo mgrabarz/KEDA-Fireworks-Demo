@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fireworks-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fireworks-web
+  template:
+    metadata:
+      labels:
+        app: fireworks-web
+    spec:
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
+      containers:
+      - name: fireworks-web
+        image: grabarz/azure-fireworks-web:v1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fireworks-web
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: fireworks-web
